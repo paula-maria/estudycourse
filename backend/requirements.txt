@@ -1,0 +1,32 @@
+# ===========================
+# Framework
+# ===========================
+fastapi
+uvicorn[standard]
+
+# ===========================
+# Banco de Dados
+# ===========================
+sqlalchemy
+alembic
+psycopg[binary]
+
+# ===========================
+# Configuração
+# ===========================
+pydantic-settings
+python-dotenv
+
+# ===========================
+# Autenticação
+# ===========================
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+email-validator
+
+# ===========================
+# Testes
+# ===========================
+pytest
+httpx
