@@ -1,152 +1,200 @@
-# StudyFlow AI
+# StudyCourses
 
-StudyFlow AI é uma plataforma inteligente para planejamento e acompanhamento de estudos para concursos públicos.
+Plataforma inteligente de preparação para concursos públicos.
 
-O sistema utiliza Inteligência Artificial para interpretar editais em PDF, extrair automaticamente disciplinas e conteúdos programáticos, construir um plano de estudos personalizado e acompanhar continuamente a evolução do estudante.
+O StudyCourses tem como objetivo auxiliar estudantes na organização dos estudos através da análise de editais, criação de cronogramas personalizados, acompanhamento de desempenho e geração de cadernos de erros.
 
-O objetivo da plataforma é atuar como um assistente de estudos, adaptando o cronograma conforme o desempenho, disponibilidade e objetivos de cada usuário.
-
----
-
-## Principais funcionalidades
-
-- Autenticação de usuários
-- Perfil de aprendizagem
-- Questionário inicial para conhecer o estudante
-- Upload de editais em PDF
-- Extração automática de informações do edital
-- Organização automática das disciplinas e tópicos
-- Geração de cronograma personalizado
-- Checklist do conteúdo programático
-- Controle de sessões de estudo
-- Revisão espaçada
-- Caderno de erros
-- Banco de questões
-- Simulados
-- Dashboard de desempenho
-- Assistente de estudos baseado em IA
+A plataforma busca transformar um edital de concurso em uma estratégia de estudos personalizada, considerando o perfil, objetivos, disponibilidade e evolução do estudante.
 
 ---
 
-## Tecnologias
+# Objetivo
 
-### Frontend
+Criar uma plataforma capaz de:
 
-- Next.js
+- interpretar editais de concursos;
+- organizar conteúdos cobrados;
+- gerar cronogramas personalizados;
+- acompanhar o progresso do estudante;
+- identificar dificuldades;
+- auxiliar na revisão através de cadernos de erros.
+
+---
+
+# Funcionalidades
+
+## Gestão de usuários
+
+- Cadastro de usuários;
+- Login;
+- Autenticação;
+- Perfil do estudante;
+- Preferências de estudo;
+- Histórico de atividades.
+
+---
+
+## Perfil do estudante
+
+Antes da criação do plano de estudos, o sistema coleta informações sobre o estudante:
+
+- concurso desejado;
+- cargo;
+- data da prova;
+- horas disponíveis por dia;
+- disciplinas já estudadas;
+- nível de conhecimento;
+- dificuldades;
+- experiência anterior em concursos.
+
+Essas informações serão utilizadas para personalização do planejamento.
+
+---
+
+## Análise de edital
+
+O usuário poderá realizar upload de um edital em PDF.
+
+O sistema deverá:
+
+- extrair texto do documento;
+- identificar disciplinas;
+- identificar assuntos;
+- organizar conteúdos;
+- gerar uma estrutura de estudos.
+
+---
+
+## Cronograma inteligente
+
+O sistema cria planos considerando:
+
+- data da prova;
+- peso das disciplinas;
+- disponibilidade diária;
+- dificuldade do estudante;
+- progresso realizado.
+
+---
+
+## Checklist de estudos
+
+Controle das atividades:
+
+- conteúdos concluídos;
+- revisões pendentes;
+- metas diárias;
+- progresso geral.
+
+---
+
+## Caderno de erros
+
+Registro das questões que o estudante errou:
+
+- questão;
+- disciplina;
+- assunto;
+- motivo do erro;
+- revisão necessária;
+- histórico de desempenho.
+
+---
+
+# Tecnologias
+
+## Backend
+
+- Python
+- FastAPI
+- SQLAlchemy
+- Alembic
+- PostgreSQL
+- JWT Authentication
+
+## Frontend
+
 - React
 - TypeScript
 - Tailwind CSS
-- shadcn/ui
 
-### Backend
-
-- FastAPI
-- SQLAlchemy
-- PostgreSQL
-- Redis
-
-### Inteligência Artificial
-
-- OpenAI API
-- PyMuPDF
-- pdfplumber
-
-### Infraestrutura
+## Infraestrutura
 
 - Docker
 - Docker Compose
+- Nginx
+
+## Inteligência Artificial
+
+Planejado:
+
+- processamento de documentos;
+- NLP para análise de editais;
+- embeddings;
+- recomendação personalizada;
+- análise de desempenho.
 
 ---
 
-## Estrutura do projeto
-
-```
-studyflow-ai/
+# Arquitetura inicial
+studycourses/
 
 ├── backend/
+│
+│ ├── app/
+│ │
+│ │ ├── core/
+│ │ ├── users/
+│ │ ├── exams/
+│ │ ├── schedules/
+│ │ └── questions/
+│ │
+│ ├── alembic/
+│ ├── requirements.txt
+│ └── .env
+│
 ├── frontend/
+│
 ├── docs/
-├── docker/
-├── scripts/
-├── architecture.md
-├── README.md
-└── LICENSE
-```
+│
+└── docker-compose.yml
 
----
 
-## Fluxo da aplicação
+### 1. Criar ambiente virtual
 
-```
-Cadastro
+```bash
+python -m venv .venv
+2. Ativar ambiente virtual
 
-↓
+Linux:
 
-Questionário inicial
+source .venv/bin/activate
+3. Instalar dependências
+pip install -r requirements.txt
+4. Configurar variáveis de ambiente
 
-↓
+Criar o arquivo .env na pasta backend:
 
-Upload do edital
+touch .env
 
-↓
+Exemplo:
 
-Extração do conteúdo
+DATABASE_URL=postgresql+psycopg://postgres:postgres@localhost:5432/study_platform
 
-↓
+SECRET_KEY=sua_chave_secreta
 
-Organização das disciplinas
+ALGORITHM=HS256
 
-↓
+ACCESS_TOKEN_EXPIRE_MINUTES=30
+5. Executar migrations do banco
+python -m alembic upgrade head
+6. Executar aplicação
+python -m uvicorn app.main:app --reload
 
-Plano de estudos
+A API estará disponível em:
 
-↓
+http://127.0.0.1:8000
 
-Checklist
+Documentação automática:
 
-↓
-
-Sessões de estudo
-
-↓
-
-Análise de desempenho
-
-↓
-
-Reorganização automática do cronograma
-```
-
----
-
-## Roadmap
-
-### MVP
-
-- Cadastro de usuários
-- Login
-- Perfil do estudante
-- Upload de edital
-- Parser de PDF
-- Cronograma
-- Checklist
-
-### Versão 2
-
-- Questões
-- Caderno de erros
-- Dashboard
-- Revisão espaçada
-
-### Versão 3
-
-- Assistente IA
-- Flashcards
-- Simulados inteligentes
-- Aplicativo mobile
-
----
-
-## Licença
-
-MIT
+http://127.0.0.1:8000/docs
