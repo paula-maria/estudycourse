@@ -19,7 +19,17 @@ PostgreSQL
 """
 
 from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr
 
+
+class UserLogin(BaseModel):
+    email: EmailStr
+    password: str
+
+
+class Token(BaseModel):
+    access_token: str
+    token_type: str
 
 # CADASTRO DE USUÁRIO
 # Endpoint futuro:

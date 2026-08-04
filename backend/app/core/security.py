@@ -5,32 +5,31 @@ Responsabilidades:
 
 - Criar hash de senha;
 - Verificar senha informada pelo usuário;
-- Futuramente gerar e validar JWT.
+- Gerar JWT.
 """
 
+from datetime import datetime, timedelta, timezone
+
 import bcrypt
+from jose import jwt
+
+from app.core.config import settings
 
 
 def hash_password(password: str) -> str:
     """
-    Recebe uma senha normal e retorna
-    uma senha criptografada.
-
-    Exemplo:
-
-    Entrada:
-        "123456"
-
-    Saída:
-        "$2b$12$8fJ...."
-
-    Essa saída será salva no banco.
+    Gera hash bcrypt da senha.
     """
-    # bcrypt requer bytes
-    pwd_bytes = password.encode('utf-8')
+
+    pwd_bytes = password.encode("utf-8")
+
     salt = bcrypt.gensalt()
-    # Retorna como string para compatibilidade com o banco
-    return bcrypt.hashpw(pwd_bytes, salt).decode('utf-8')
+
+    return bcrypt.hashpw(
+        pwd_bytes,
+        salt
+    ).decode("utf-8")
+
 
 
 def verify_password(
@@ -38,29 +37,62 @@ def verify_password(
     hashed_password: str
 ) -> bool:
     """
-    Compara uma senha digitada pelo usuário
-    com o hash salvo no banco.
+    Compara senha informada
+    com hash salvo.
+    """
+
+    plain_bytes = plain_password.encode("utf-8")
+    hashed_bytes = hashed_password.encode("utf-8")
+
+    try:
+        return bcrypt.checkpw(
+            plain_bytes,
+            hashed_bytes
+        )
+
+    except ValueError:
+        return False
+
+
+
+def create_access_token(
+    data: dict
+) -> str:
+    """
+    Cria token JWT.
 
     Exemplo:
 
-    Usuário digita:
+    Entrada:
 
-        "123456"
+    {
+        "sub": "1"
+    }
 
-    Banco possui:
+    Saída:
 
-        "$2b$12$..."
-
-    Retorna:
-
-        True  -> senha correta
-        False -> senha errada
+    eyJhbGciOiJIUzI1...
     """
-    # bcrypt requer bytes
-    plain_bytes = plain_password.encode('utf-8')
-    hashed_bytes = hashed_password.encode('utf-8')
-    
-    try:
-        return bcrypt.checkpw(plain_bytes, hashed_bytes)
-    except ValueError:
-        return False
+
+    to_encode = data.copy()
+
+
+    expire = datetime.now(
+        timezone.utc
+    ) + timedelta(
+        minutes=settings.ACCESS_TOKEN_EXPIRE_MINUTES
+    )
+
+
+    to_encode.update(
+        {
+            "exp": expire
+        }
+    )
+
+
+    return jwt.encode(
+        to_encode,
+        settings.SECRET_KEY,
+        algorithm=settings.ALGORITHM
+    )
