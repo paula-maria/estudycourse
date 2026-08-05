@@ -1,5 +1,5 @@
 from sqlalchemy import String
-from sqlalchemy.orm import Mapped, mapped_column
+from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
 
@@ -27,3 +27,12 @@ class User(Base):
         String(255),
         nullable=False
     )
+
+    student_profile: Mapped["StudentProfile"] = relationship(
+        back_populates="user",
+        uselist=False,
+    )
+
+
+# Registra o model relacionado quando o model de usuário é carregado.
+from app.student_profiles.model import StudentProfile  # noqa: E402, F401
