@@ -5,14 +5,14 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.student_profiles.router import router as student_profiles_router
 from app.users.router import router as users_router
-
+from app.subjects.router import router as subjects_router
 
 app = FastAPI()
 
 
 app.include_router(users_router)
 app.include_router(student_profiles_router)
-
+app.include_router(subjects_router)
 
 @app.get("/")
 def root(db: Session = Depends(get_db)):
