@@ -27,7 +27,7 @@ Criar uma plataforma capaz de:
 
 - Cadastro de usuários;
 - Login;
-- Autenticação;
+- Autenticação JWT via Bearer token;
 - Perfil do estudante;
 - Preferências de estudo;
 - Histórico de atividades.
@@ -48,6 +48,42 @@ Antes da criação do plano de estudos, o sistema coleta informações sobre o e
 - experiência anterior em concursos.
 
 Essas informações serão utilizadas para personalização do planejamento.
+
+---
+
+# API implementada
+
+A documentação interativa da API está disponível em `http://127.0.0.1:8000/docs` quando a aplicação estiver em execução.
+
+## Usuários e autenticação
+
+- `POST /users/register` cria um usuário;
+- `POST /users/login` retorna um JWT;
+- `GET /users/me` retorna o usuário autenticado.
+
+Envie o token retornado no login no header `Authorization`:
+
+```text
+Bearer <token>
+```
+
+## Perfil do estudante
+
+As rotas abaixo exigem autenticação e usam o usuário identificado pelo JWT:
+
+- `POST /profile` cria o perfil do estudante;
+- `GET /profile` retorna o perfil do estudante autenticado;
+- `PUT /profile` atualiza os campos enviados no perfil.
+
+Cada usuário possui, no máximo, um perfil. O perfil armazena objetivo de estudo, prova, data da prova, horas semanais, dias de estudo, escolaridade, experiência e turno preferido.
+
+## Disciplinas
+
+- `POST /subjects` cria uma disciplina;
+- `GET /subjects` lista disciplinas;
+- `GET /subjects/{subject_id}` busca uma disciplina;
+- `PUT /subjects/{subject_id}` atualiza uma disciplina;
+- `DELETE /subjects/{subject_id}` remove uma disciplina.
 
 ---
 
@@ -136,60 +172,71 @@ Planejado:
 
 ---
 
-# Arquitetura inicial
-studycourses/
+# Estrutura atual do backend
 
-├── backend/
-│
-│ ├── app/
-│ │
-│ │ ├── core/
-│ │ ├── users/
-│ │ ├── exams/
-│ │ ├── schedules/
-│ │ └── questions/
-│ │
-│ ├── alembic/
-│ ├── requirements.txt
-│ └── .env
-│
-├── frontend/
-│
-├── docs/
-│
-└── docker-compose.yml
+```text
+backend/
+├── alembic/              # migrations e registro dos models
+├── app/
+│   ├── core/             # configuração, banco, JWT e dependências
+│   ├── users/            # cadastro, login e usuário autenticado
+│   ├── student_profiles/ # perfil do estudante
+│   ├── subjects/         # disciplinas
+│   └── main.py           # aplicação e registro dos routers
+├── requirements.txt
+└── .env                  # configuração local (não versionada)
+```
 
+Cada domínio organiza `model.py`, `schemas.py`, `repository.py`, `service.py` e `router.py`. Models SQLAlchemy que devem entrar em migrations precisam ser importados em `alembic/env.py`, para que façam parte de `Base.metadata`.
+
+# Como executar
 
 ### 1. Criar ambiente virtual
 
 ```bash
 python -m venv .venv
-2. Ativar ambiente virtual
+```
 
-Linux:
+### 2. Ativar ambiente virtual
 
+```bash
 source .venv/bin/activate
-3. Instalar dependências
+```
+
+### 3. Instalar dependências
+
+```bash
 pip install -r requirements.txt
-4. Configurar variáveis de ambiente
+```
 
-Criar o arquivo .env na pasta backend:
+### 4. Configurar variáveis de ambiente
 
+Crie o arquivo `.env` na pasta `backend`:
+
+```bash
 touch .env
+```
 
 Exemplo:
 
+```dotenv
 DATABASE_URL=postgresql+psycopg://postgres:postgres@localhost:5432/study_platform
-
 SECRET_KEY=sua_chave_secreta
-
 ALGORITHM=HS256
-
 ACCESS_TOKEN_EXPIRE_MINUTES=30
-5. Executar migrations do banco
+```
+
+### 5. Executar migrations do banco
+
+```bash
 python -m alembic upgrade head
-6. Executar aplicação
+```
+
+### 6. Executar aplicação
+
+```bash
 python -m uvicorn app.main:app --reload
+```
 
 A API estará disponível em:
 

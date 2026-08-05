@@ -101,25 +101,33 @@ Auth     Planner     AI      Parser
           Redis
 ---
 
-# Organização do Backend
+# Organização atual do Backend
 
 ```
 backend/
-
-app/
-
-├── api/
-├── core/
-├── models/
-├── schemas/
-├── repositories/
-├── services/
-├── workers/
-├── tests/
-└── main.py
+├── alembic/
+│   └── env.py
+└── app/
+    ├── core/
+    │   ├── config.py
+    │   ├── database.py
+    │   ├── dependencies.py
+    │   └── security.py
+    ├── users/
+    ├── student_profiles/
+    ├── subjects/
+    └── main.py
 ```
 
 Cada domínio possui sua própria camada de serviços, repositórios, modelos e schemas.
+
+- `model.py`: mapeamento SQLAlchemy;
+- `schemas.py`: contratos de entrada e saída da API;
+- `repository.py`: acesso ao banco com SQLAlchemy;
+- `service.py`: regras de negócio;
+- `router.py`: endpoints FastAPI.
+
+Os models usados em migrations são importados em `alembic/env.py`, permitindo que o Alembic os encontre em `Base.metadata` durante o autogenerate.
 
 ---
 
@@ -155,6 +163,8 @@ O frontend é organizado por funcionalidades, evitando estrutura baseada apenas 
 
 Responsável por autenticação, autorização, gerenciamento de usuários e sessões.
 
+O login gera um JWT contendo o identificador do usuário no campo `sub`. A dependência `get_current_user` recebe o Bearer token, valida e decodifica o JWT, busca o usuário no banco e o fornece às rotas protegidas.
+
 ---
 
 ## User Profile
@@ -168,6 +178,14 @@ Armazena informações do estudante.
 - disciplinas fortes
 - disciplinas fracas
 - preferências de estudo
+
+Na implementação atual, a relação entre `users` e `student_profiles` é 1:1. As rotas `POST /profile`, `GET /profile` e `PUT /profile` exigem autenticação.
+
+---
+
+## Subjects
+
+Gerencia as disciplinas cadastradas na plataforma, com operações de criação, listagem, consulta, atualização e remoção pela rota `/subjects`.
 
 ---
 
@@ -314,7 +332,7 @@ Principais entidades:
 
 ```
 users
-profiles
+student_profiles
 exam_notices
 subjects
 topics
