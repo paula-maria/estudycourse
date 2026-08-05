@@ -4,6 +4,7 @@ from sqlalchemy import Date, DateTime, ForeignKey, Integer, String
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.core.database import Base
+from app.users.model import User  # noqa: F401
 
 
 class StudentProfile(Base):

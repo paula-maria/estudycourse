@@ -34,5 +34,5 @@ class User(Base):
     )
 
 
-# Registra o model relacionado quando o model de usuário é carregado.
-from app.student_profiles.model import StudentProfile  # noqa: E402, F401
+# Registra o módulo relacionado quando o model de usuário é carregado.
+import app.student_profiles.model  # noqa: E402, F401
