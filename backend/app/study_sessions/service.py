@@ -15,8 +15,21 @@ class StudySessionService:
     def create(
         self,
         db: Session,
-        data
+        data,
+        user_id: int
     ):
+        plan_subject = self.repository.get_plan_subject_for_user(
+            db,
+            data.study_plan_subject_id,
+            user_id
+        )
+
+        if not plan_subject:
+            raise HTTPException(
+                status_code=404,
+                detail="Study plan subject not found"
+            )
+
         if data.duration_minutes <= 0:
             raise HTTPException(
                 status_code=400,
@@ -39,11 +52,13 @@ class StudySessionService:
     def get(
         self,
         db: Session,
-        session_id: int
+        session_id: int,
+        user_id: int
     ):
-        session = self.repository.get_by_id(
+        session = self.repository.get_by_id_for_user(
             db,
-            session_id
+            session_id,
+            user_id
         )
 
         if not session:
@@ -57,22 +72,26 @@ class StudySessionService:
     def list_by_plan_subject(
         self,
         db: Session,
-        study_plan_subject_id: int
+        study_plan_subject_id: int,
+        user_id: int
     ):
-        return self.repository.get_by_plan_subject(
+        return self.repository.get_by_plan_subject_for_user(
             db,
-            study_plan_subject_id
+            study_plan_subject_id,
+            user_id
         )
 
     def update(
         self,
         db: Session,
         session_id: int,
+        user_id: int,
         data
     ):
         session = self.get(
             db,
-            session_id
+            session_id,
+            user_id
         )
 
         values = data.model_dump(
@@ -103,11 +122,13 @@ class StudySessionService:
     def complete(
         self,
         db: Session,
-        session_id: int
+        session_id: int,
+        user_id: int
     ):
         session = self.get(
             db,
-            session_id
+            session_id,
+            user_id
         )
 
         session.status = "completed"
@@ -120,11 +141,13 @@ class StudySessionService:
     def delete(
         self,
         db: Session,
-        session_id: int
+        session_id: int,
+        user_id: int
     ):
         session = self.get(
             db,
-            session_id
+            session_id,
+            user_id
         )
 
         self.repository.delete(

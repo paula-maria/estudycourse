@@ -2,6 +2,9 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.security import get_current_user
+from app.users.model import User
+
 from app.study_sessions.schemas import (
     StudySessionCreate,
     StudySessionResponse,
@@ -26,24 +29,12 @@ service = StudySessionService()
 def create_session(
     data: StudySessionCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return service.create(
         db,
-        data
-    )
-
-
-@router.get(
-    "/{session_id}",
-    response_model=StudySessionResponse,
-)
-def get_session(
-    session_id: int,
-    db: Session = Depends(get_db),
-):
-    return service.get(
-        db,
-        session_id
+        data,
+        current_user.id
     )
 
 
@@ -54,10 +45,28 @@ def get_session(
 def list_sessions(
     study_plan_subject_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return service.list_by_plan_subject(
         db,
-        study_plan_subject_id
+        study_plan_subject_id,
+        current_user.id,
+    )
+
+
+@router.get(
+    "/{session_id}",
+    response_model=StudySessionResponse,
+)
+def get_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return service.get(
+        db,
+        session_id,
+        current_user.id,
     )
 
 
@@ -69,11 +78,13 @@ def update_session(
     session_id: int,
     data: StudySessionUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return service.update(
         db,
         session_id,
-        data
+        current_user.id,
+        data,
     )
 
 
@@ -84,10 +95,12 @@ def update_session(
 def complete_session(
     session_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return service.complete(
         db,
-        session_id
+        session_id,
+        current_user.id,
     )
 
 
@@ -98,8 +111,10 @@ def complete_session(
 def delete_session(
     session_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     service.delete(
         db,
-        session_id
+        session_id,
+        current_user.id,
     )
