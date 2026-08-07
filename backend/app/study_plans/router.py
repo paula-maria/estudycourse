@@ -2,6 +2,9 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.security import get_current_user
+from app.users.model import User
+
 from app.study_plans.schemas import (
     StudyPlanCreate,
     StudyPlanResponse,
@@ -26,12 +29,11 @@ service = StudyPlanService()
 def create_study_plan(
     data: StudyPlanCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    user_id = 1
-
     return service.create(
         db,
-        user_id,
+        current_user.id,
         data
     )
 
@@ -42,12 +44,11 @@ def create_study_plan(
 )
 def list_study_plans(
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    user_id = 1
-
     return service.list(
         db,
-        user_id
+        current_user.id
     )
 
 
@@ -58,13 +59,12 @@ def list_study_plans(
 def get_study_plan(
     study_plan_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    user_id = 1
-
     return service.get(
         db,
         study_plan_id,
-        user_id
+        current_user.id
     )
 
 
@@ -76,13 +76,12 @@ def update_study_plan(
     study_plan_id: int,
     data: StudyPlanUpdate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    user_id = 1
-
     return service.update(
         db,
         study_plan_id,
-        user_id,
+        current_user.id,
         data
     )
 
@@ -94,11 +93,10 @@ def update_study_plan(
 def delete_study_plan(
     study_plan_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
-    user_id = 1
-
     service.delete(
         db,
         study_plan_id,
-        user_id
+        current_user.id
     )

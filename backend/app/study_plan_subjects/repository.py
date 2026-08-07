@@ -1,6 +1,7 @@
 from sqlalchemy.orm import Session
 
 from app.study_plan_subjects.model import StudyPlanSubject
+from app.study_plans.model import StudyPlan
 
 
 class StudyPlanSubjectRepository:
@@ -29,15 +30,40 @@ class StudyPlanSubjectRepository:
             .first()
         )
 
-    def get_by_plan(
+    def get_by_id_for_user(
         self,
         db: Session,
-        study_plan_id: int
+        study_plan_subject_id: int,
+        user_id: int
     ):
         return (
             db.query(StudyPlanSubject)
+            .join(
+                StudyPlan,
+                StudyPlan.id == StudyPlanSubject.study_plan_id
+            )
             .filter(
-                StudyPlanSubject.study_plan_id == study_plan_id
+                StudyPlanSubject.id == study_plan_subject_id,
+                StudyPlan.user_id == user_id
+            )
+            .first()
+        )
+
+    def list_by_plan(
+        self,
+        db: Session,
+        study_plan_id: int,
+        user_id: int
+    ):
+        return (
+            db.query(StudyPlanSubject)
+            .join(
+                StudyPlan,
+                StudyPlan.id == StudyPlanSubject.study_plan_id
+            )
+            .filter(
+                StudyPlanSubject.study_plan_id == study_plan_id,
+                StudyPlan.user_id == user_id
             )
             .all()
         )
@@ -49,3 +75,5 @@ class StudyPlanSubjectRepository:
     ):
         db.delete(study_plan_subject)
         db.commit()
+
+        

@@ -2,6 +2,8 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.security import get_current_user
+from app.users.model import User
 from app.study_plan_subjects.schemas import (
     StudyPlanSubjectCreate,
     StudyPlanSubjectResponse,
@@ -26,6 +28,7 @@ def add_subject_to_plan(
     study_plan_id: int,
     data: StudyPlanSubjectCreate,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return service.create(
         db,
@@ -35,16 +38,34 @@ def add_subject_to_plan(
 
 
 @router.get(
-    "/{study_plan_id}/subjects",
+    "/plan/{study_plan_id}",
     response_model=list[StudyPlanSubjectResponse],
 )
-def list_plan_subjects(
+def list_by_plan(
     study_plan_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     return service.list_by_plan(
         db,
-        study_plan_id
+        study_plan_id,
+        current_user.id
+    )
+
+
+@router.get(
+    "/{study_plan_subject_id}",
+    response_model=StudyPlanSubjectResponse,
+)
+def get_study_plan_subject(
+    study_plan_subject_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return service.get(
+        db,
+        study_plan_subject_id,
+        current_user.id
     )
 
 
@@ -55,6 +76,7 @@ def list_plan_subjects(
 def remove_subject_from_plan(
     study_plan_subject_id: int,
     db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
 ):
     service.delete(
         db,

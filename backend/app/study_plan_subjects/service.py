@@ -36,14 +36,36 @@ class StudyPlanSubjectService:
             study_plan_subject
         )
 
+    def get(
+        self,
+        db: Session,
+        study_plan_subject_id: int,
+        user_id: int
+    ):
+        item = self.repository.get_by_id_for_user(
+            db,
+            study_plan_subject_id,
+            user_id
+        )
+
+        if not item:
+            raise HTTPException(
+                status_code=404,
+                detail="Study plan subject not found"
+            )
+
+        return item
+
     def list_by_plan(
         self,
         db: Session,
-        study_plan_id: int
+        study_plan_id: int,
+        user_id: int
     ):
-        return self.repository.get_by_plan(
+        return self.repository.list_by_plan(
             db,
-            study_plan_id
+            study_plan_id,
+            user_id
         )
 
     def delete(
