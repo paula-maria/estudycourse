@@ -80,5 +80,6 @@ def remove_subject_from_plan(
 ):
     service.delete(
         db,
-        study_plan_subject_id
+        study_plan_subject_id,
+        current_user.id
     )

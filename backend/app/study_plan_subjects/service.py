@@ -71,11 +71,13 @@ class StudyPlanSubjectService:
     def delete(
         self,
         db: Session,
-        study_plan_subject_id: int
+        study_plan_subject_id: int,
+        user_id: int
     ):
-        item = self.repository.get_by_id(
+        item = self.repository.get_by_id_for_user(
             db,
-            study_plan_subject_id
+            study_plan_subject_id,
+            user_id
         )
 
         if not item:
