@@ -7,7 +7,11 @@ from alembic import context
 
 from app.core.config import settings
 from app.core.database import Base
+from app.student_profiles.model import StudentProfile
 from app.subjects.model import Subject
+from app.study_plans.model import StudyPlan
+from app.study_plan_subjects.model import StudyPlanSubject
+from app.study_sessions.model import StudySession
 from app.users.model import User
 
 config = context.config
