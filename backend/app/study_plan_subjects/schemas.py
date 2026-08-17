@@ -22,3 +22,13 @@ class StudyPlanSubjectResponse(BaseModel):
     model_config = ConfigDict(
         from_attributes=True
     )
+
+
+class StudyPlanSubjectProgress(BaseModel):
+    study_plan_subject_id: int
+    total_sessions: int
+    completed_sessions: int
+    pending_sessions: int
+    total_minutes: int
+    total_hours: float
+    progress_percentage: float

@@ -6,6 +6,7 @@ from app.core.security import get_current_user
 from app.users.model import User
 from app.study_plan_subjects.schemas import (
     StudyPlanSubjectCreate,
+    StudyPlanSubjectProgress,
     StudyPlanSubjectResponse,
 )
 from app.study_plan_subjects.service import StudyPlanSubjectService
@@ -82,4 +83,20 @@ def remove_subject_from_plan(
         db,
         study_plan_subject_id,
         current_user.id
+    )
+
+
+@router.get(
+    "/subjects/{study_plan_subject_id}/progress",
+    response_model=StudyPlanSubjectProgress,
+)
+def get_progress(
+    study_plan_subject_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return service.get_progress(
+        db,
+        study_plan_subject_id,
+        current_user.id,
     )
