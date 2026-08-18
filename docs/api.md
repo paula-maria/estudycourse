@@ -1,4 +1,4 @@
-# eStudyCourse API Documentation
+# StudyCourse API Documentation
 
 Esta documentação descreve todos os endpoints disponíveis na API do backend do projeto, assim como os requisitos de autenticação.
 
