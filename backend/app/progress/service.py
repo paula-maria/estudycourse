@@ -2,6 +2,11 @@ from fastapi import HTTPException
 from sqlalchemy.orm import Session
 
 from app.progress.repository import ProgressRepository
+from app.progress.schemas import (
+    ProgressResponse,
+    SubjectProgressResponse,
+    DailyProgressResponse,
+)
 
 
 class ProgressService:
@@ -185,17 +190,14 @@ class ProgressService:
             user_id,
         )
 
-        result = []
-        for record in daily_records:
-            result.append(
-                {
-                    "date": record.date,
-                    "minutes_studied": record.minutes_studied or 0,
-                    "sessions_completed": record.sessions_completed or 0,
-                }
+        return [
+            DailyProgressResponse(
+                date=record.date,
+                minutes_studied=record.minutes_studied or 0,
+                sessions_completed=record.sessions_completed or 0,
             )
-
-        return result
+            for record in daily_records
+        ]
 
     def get_dashboard(
         self,
