@@ -82,6 +82,18 @@ Gerencia o cálculo e retorno do progresso dos estudos do usuário baseando-se n
 - **`GET /progress`** (Protegido): Retorna o progresso geral do usuário (todas as sessões associadas aos seus planos).
 - **`GET /progress/study-plan/{study_plan_id}`** (Protegido): Retorna o progresso filtrado por um plano de estudos específico.
 - **`GET /progress/subjects`** (Protegido): Retorna o progresso agrupado por matéria, listando a performance em cada uma.
+- **`GET /progress/daily`** (Protegido): Retorna a evolução diária (minutos estudados e sessões concluídas agrupados por data).
+
+---
+
+## 7. Dashboard (`/dashboard`)
+
+Consolida as informações do usuário em um único payload para a tela principal (Dashboard) do frontend.
+
+- **`GET /dashboard`** (Protegido): Retorna um consolidado contendo:
+  - `summary`: Resumo geral do progresso.
+  - `subjects`: Progresso detalhado por matéria.
+  - `daily_progress`: Evolução diária de estudos.
 
 ---
 

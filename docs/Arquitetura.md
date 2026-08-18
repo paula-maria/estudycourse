@@ -312,13 +312,11 @@ Cada registro contém:
 
 ## Dashboard
 
-Centraliza indicadores como:
+Centraliza e consolida indicadores e progresso do estudante. Atualmente expõe os seguintes dados em uma única chamada (GET `/dashboard`):
 
-- horas estudadas
-- evolução semanal
-- percentual do edital concluído
-- disciplinas mais estudadas
-- desempenho por assunto
+- Resumo de horas estudadas e sessões concluídas/pendentes
+- Percentuais de progresso (geral e por disciplinas)
+- Evolução diária (histórico de minutos estudados por dia)
 
 ---
 
