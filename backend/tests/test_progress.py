@@ -261,3 +261,48 @@ def test_isolation_progress(
     data_a = response_a.json()
     assert data_a["total_sessions"] == 2
     assert data_a["completed_sessions"] == 2
+
+
+# ---------------------------------------------------------------------------
+# Teste 8: evolução diária
+# ---------------------------------------------------------------------------
+
+
+def test_get_daily_progress(
+    client, db_session, user_a, subject_1, headers_a
+):
+    """Evolução diária deve contar apenas sessões concluídas e agrupar por data."""
+    plan = create_study_plan(db_session, user_a.id)
+    sps = create_study_plan_subject(db_session, plan.id, subject_1.id)
+
+    # Dia 18/08: 150 min (60 + 90) completed
+    session1 = create_study_session(db_session, sps.id, 60, "completed")
+    session1.session_date = date(2026, 8, 18)
+    session2 = create_study_session(db_session, sps.id, 90, "completed")
+    session2.session_date = date(2026, 8, 18)
+
+    # Dia 19/08: 120 min completed
+    session3 = create_study_session(db_session, sps.id, 120, "completed")
+    session3.session_date = date(2026, 8, 19)
+
+    # Dia 19/08: 45 min pending (NÃO DEVE ENTRAR)
+    session4 = create_study_session(db_session, sps.id, 45, "pending")
+    session4.session_date = date(2026, 8, 19)
+
+    db_session.commit()
+
+    response = client.get("/progress/daily", headers=headers_a)
+
+    assert response.status_code == 200
+
+    data = response.json()
+    assert len(data) == 2
+
+    assert data[0]["date"] == "2026-08-18"
+    assert data[0]["minutes_studied"] == 150
+    assert data[0]["sessions_completed"] == 2
+
+    assert data[1]["date"] == "2026-08-19"
+    assert data[1]["minutes_studied"] == 120
+    assert data[1]["sessions_completed"] == 1
+
