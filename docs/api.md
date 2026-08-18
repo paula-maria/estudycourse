@@ -75,8 +75,19 @@ Agenda e controla sessões de estudo diárias/práticas de uma matéria dentro d
 
 ---
 
-## 6. Health Check (`/`)
+## 6. Progress (`/progress`)
+
+Gerencia o cálculo e retorno do progresso dos estudos do usuário baseando-se no tempo (minutos) e na quantidade de sessões (concluídas vs. pendentes).
+
+- **`GET /progress`** (Protegido): Retorna o progresso geral do usuário (todas as sessões associadas aos seus planos).
+- **`GET /progress/study-plan/{study_plan_id}`** (Protegido): Retorna o progresso filtrado por um plano de estudos específico.
+- **`GET /progress/subjects`** (Protegido): Retorna o progresso agrupado por matéria, listando a performance em cada uma.
+
+---
+
+## 7. Health Check (`/`)
 
 - **`GET /`**: Rota raiz de saúde para validar se a API e o banco de dados estão conectados corretamente. Retorna `{"message": "API is running", "database": "connected"}`.
 
 > (Protegido) = Rota protegida por autenticação JWT (requer usuário logado).
+

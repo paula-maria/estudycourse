@@ -279,6 +279,17 @@ O progresso é calculado automaticamente.
 
 ---
 
+## Progress
+
+Módulo responsável por calcular estatísticas de evolução do estudante.
+
+Agrega os dados de sessões concluídas e pendentes (via banco de dados) para apresentar:
+- O percentual de conclusão geral.
+- O percentual de conclusão por plano de estudos.
+- O percentual e total de minutos dedicados agrupados por matéria (disciplina).
+
+---
+
 ## Questions
 
 Gerencia banco de questões, simulados e estatísticas.
