@@ -174,3 +174,40 @@ class ProgressService:
             )
 
         return result
+
+    def get_daily_progress(
+        self,
+        db: Session,
+        user_id: int,
+    ):
+        daily_records = self.repository.get_daily_progress(
+            db,
+            user_id,
+        )
+
+        result = []
+        for record in daily_records:
+            result.append(
+                {
+                    "date": str(record.date),
+                    "minutes_studied": record.minutes_studied or 0,
+                    "sessions_completed": record.sessions_completed or 0,
+                }
+            )
+
+        return result
+
+    def get_dashboard(
+        self,
+        db: Session,
+        user_id: int,
+    ):
+        summary = self.get_user_progress(db, user_id)
+        subjects = self.get_subjects_progress(db, user_id)
+        daily_progress = self.get_daily_progress(db, user_id)
+
+        return {
+            "summary": summary,
+            "subjects": subjects,
+            "daily_progress": daily_progress,
+        }

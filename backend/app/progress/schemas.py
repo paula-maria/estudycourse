@@ -19,3 +19,15 @@ class SubjectProgressResponse(BaseModel):
     total_minutes: int
     total_hours: float
     progress_percentage: float
+
+
+class DailyProgressResponse(BaseModel):
+    date: str
+    minutes_studied: int
+    sessions_completed: int
+
+
+class DashboardResponse(BaseModel):
+    summary: ProgressResponse
+    subjects: list[SubjectProgressResponse]
+    daily_progress: list[DailyProgressResponse]

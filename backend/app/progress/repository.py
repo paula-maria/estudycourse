@@ -87,3 +87,35 @@ class ProgressRepository:
             )
             .all()
         )
+
+    def get_daily_progress(
+        self,
+        db: Session,
+        user_id: int,
+    ):
+        return (
+            db.query(
+                func.date(StudySession.session_date).label("date"),
+                func.sum(StudySession.duration_minutes).label("minutes_studied"),
+                func.count(StudySession.id).label("sessions_completed"),
+            )
+            .join(
+                StudyPlanSubject,
+                StudyPlanSubject.id == StudySession.study_plan_subject_id,
+            )
+            .join(
+                StudyPlan,
+                StudyPlan.id == StudyPlanSubject.study_plan_id,
+            )
+            .filter(
+                StudyPlan.user_id == user_id,
+                StudySession.status == "completed",
+            )
+            .group_by(
+                func.date(StudySession.session_date),
+            )
+            .order_by(
+                func.date(StudySession.session_date).asc(),
+            )
+            .all()
+        )

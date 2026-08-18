@@ -6,6 +6,7 @@ from app.core.security import get_current_user
 from app.progress.schemas import (
     ProgressResponse,
     SubjectProgressResponse,
+    DailyProgressResponse,
 )
 from app.progress.service import ProgressService
 from app.users.model import User
@@ -58,6 +59,20 @@ def get_subjects_progress(
     current_user: User = Depends(get_current_user),
 ):
     return service.get_subjects_progress(
+        db,
+        current_user.id,
+    )
+
+
+@router.get(
+    "/daily",
+    response_model=list[DailyProgressResponse],
+)
+def get_daily_progress(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return service.get_daily_progress(
         db,
         current_user.id,
     )
