@@ -1,15 +1,15 @@
 from sqlalchemy import func
 from sqlalchemy.orm import Session
 
-
 from app.study_plan_subjects.model import StudyPlanSubject
 from app.study_plans.model import StudyPlan
 from app.study_sessions.model import StudySession
+from app.subjects.model import Subject
 
 
 class ProgressRepository:
-    
-    def get_user_sessions(self, db: Session, user_id: int, ):
+
+    def get_user_sessions(self, db: Session, user_id: int):
         return (
             db.query(StudySession)
             .join(
@@ -57,24 +57,18 @@ class ProgressRepository:
         return (
             db.query(
                 StudyPlanSubject.id,
-                StudyPlanSubject.subject_name,
-                func.count(StudySession.id).label(
-                    "total_sessions"
-                ),
-                func.count(
-                    StudySession.id
-                ).filter(
-                    StudySession.status == "completed"
-                ).label(
-                    "completed_sessions"
-                ),
-                func.sum(
-                    StudySession.duration_minutes
-                ).filter(
-                    StudySession.status == "completed"
-                ).label(
-                    "total_minutes"
-                ),
+                Subject.name.label("subject_name"),
+                func.count(StudySession.id).label("total_sessions"),
+                func.count(StudySession.id)
+                .filter(StudySession.status == "completed")
+                .label("completed_sessions"),
+                func.sum(StudySession.duration_minutes)
+                .filter(StudySession.status == "completed")
+                .label("total_minutes"),
+            )
+            .join(
+                Subject,
+                Subject.id == StudyPlanSubject.subject_id,
             )
             .join(
                 StudyPlan,
@@ -82,15 +76,14 @@ class ProgressRepository:
             )
             .outerjoin(
                 StudySession,
-                StudySession.study_plan_subject_id
-                == StudyPlanSubject.id,
+                StudySession.study_plan_subject_id == StudyPlanSubject.id,
             )
             .filter(
                 StudyPlan.user_id == user_id,
             )
             .group_by(
                 StudyPlanSubject.id,
-                StudyPlanSubject.subject_name,
+                Subject.name,
             )
             .all()
         )

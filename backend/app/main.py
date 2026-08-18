@@ -9,6 +9,7 @@ from app.subjects.router import router as subjects_router
 from app.study_plans.router import router as study_plans_router
 from app.study_plan_subjects.router import (router as study_plan_subjects_router)
 from app.study_sessions.router import (router as study_sessions_router)
+from app.progress.router import router as progress_router
 
 app = FastAPI()
 
@@ -19,6 +20,7 @@ app.include_router(subjects_router)
 app.include_router(study_plans_router)
 app.include_router(study_plan_subjects_router)
 app.include_router(study_sessions_router)
+app.include_router(progress_router)
 
 @app.get("/")
 def root(db: Session = Depends(get_db)):
