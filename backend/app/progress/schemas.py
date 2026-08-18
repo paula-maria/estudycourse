@@ -1,3 +1,4 @@
+from datetime import date
 from pydantic import BaseModel
 
 
@@ -22,7 +23,7 @@ class SubjectProgressResponse(BaseModel):
 
 
 class DailyProgressResponse(BaseModel):
-    date: str
+    date: date
     minutes_studied: int
     sessions_completed: int
 

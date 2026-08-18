@@ -189,7 +189,7 @@ class ProgressService:
         for record in daily_records:
             result.append(
                 {
-                    "date": str(record.date),
+                    "date": record.date,
                     "minutes_studied": record.minutes_studied or 0,
                     "sessions_completed": record.sessions_completed or 0,
                 }
