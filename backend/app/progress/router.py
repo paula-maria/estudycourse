@@ -4,9 +4,10 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.core.security import get_current_user
 from app.progress.schemas import (
+    DashboardResponse,
+    DailyProgressResponse,
     ProgressResponse,
     SubjectProgressResponse,
-    DailyProgressResponse,
 )
 from app.progress.service import ProgressService
 from app.users.model import User
@@ -35,22 +36,6 @@ def get_progress(
 
 
 @router.get(
-    "/study-plan/{study_plan_id}",
-    response_model=ProgressResponse,
-)
-def get_study_plan_progress(
-    study_plan_id: int,
-    db: Session = Depends(get_db),
-    current_user: User = Depends(get_current_user),
-):
-    return service.get_plan_progress(
-        db,
-        study_plan_id,
-        current_user.id,
-    )
-
-
-@router.get(
     "/subjects",
     response_model=list[SubjectProgressResponse],
 )
@@ -73,6 +58,36 @@ def get_daily_progress(
     current_user: User = Depends(get_current_user),
 ):
     return service.get_daily_progress(
+        db,
+        current_user.id,
+    )
+
+
+@router.get(
+    "/study-plan/{study_plan_id}",
+    response_model=ProgressResponse,
+)
+def get_study_plan_progress(
+    study_plan_id: int,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return service.get_plan_progress(
+        db,
+        study_plan_id,
+        current_user.id,
+    )
+
+
+@router.get(
+    "/dashboard",
+    response_model=DashboardResponse,
+)
+def get_dashboard(
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user),
+):
+    return service.get_dashboard(
         db,
         current_user.id,
     )
