@@ -11,7 +11,7 @@ Estrutura dos testes:
   assertions nos resultados
 """
 
-from datetime import date, datetime
+from datetime import date, datetime, timezone
 
 import pytest
 
@@ -33,7 +33,7 @@ def create_study_plan(db, user_id: int) -> StudyPlan:
         description="Plano criado para testes automatizados",
         start_date=date(2026, 1, 1),
         end_date=date(2026, 12, 31),
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
     )
     db.add(plan)
     db.commit()
@@ -52,7 +52,7 @@ def create_study_plan_subject(
         study_plan_id=study_plan_id,
         subject_id=subject_id,
         weekly_hours=weekly_hours,
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
     )
     db.add(sps)
     db.commit()
@@ -72,7 +72,7 @@ def create_study_session(
         session_date=date(2026, 6, 1),
         duration_minutes=duration_minutes,
         status=status,
-        created_at=datetime.utcnow(),
+        created_at=datetime.now(timezone.utc),
     )
     db.add(session)
     db.commit()
