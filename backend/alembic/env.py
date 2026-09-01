@@ -13,6 +13,7 @@ from app.study_plans.model import StudyPlan
 from app.study_plan_subjects.model import StudyPlanSubject
 from app.study_sessions.model import StudySession
 from app.users.model import User
+from app.study_goals.model import StudyGoal
 
 config = context.config
 
