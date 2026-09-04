@@ -4,6 +4,7 @@ from enum import Enum
 class GoalType(str, Enum):
     TIME = "time"
     CONTENT = "content"
+    QUESTIONS = "questions"
 
 
 class GoalStatus(str, Enum):

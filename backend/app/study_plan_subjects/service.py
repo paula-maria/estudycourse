@@ -23,7 +23,7 @@ class StudyPlanSubjectService:
         if data.weekly_hours <= 0:
             raise HTTPException(
                 status_code=400,
-                detail="Weekly hours must be greater than zero"
+                detail="A carga horária semanal deve ser maior que zero"
             )
 
         study_plan_subject = StudyPlanSubject(
@@ -53,7 +53,7 @@ class StudyPlanSubjectService:
         if not item:
             raise HTTPException(
                 status_code=404,
-                detail="Study plan subject not found"
+                detail="Assunto do plano de estudos não encontrado"
             )
 
         return item
@@ -85,7 +85,7 @@ class StudyPlanSubjectService:
         if not item:
             raise HTTPException(
                 status_code=404,
-                detail="Study plan subject not found"
+                detail="Assunto do plano de estudos não encontrado"
             )
 
         self.repository.delete(
@@ -108,7 +108,7 @@ class StudyPlanSubjectService:
         if not item:
             raise HTTPException(
                 status_code=404,
-                detail="Study plan subject not found"
+                detail="Assunto do plano de estudos não encontrado"
             )
 
         return self.session_repository.get_progress(

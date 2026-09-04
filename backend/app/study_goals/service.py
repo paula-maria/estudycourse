@@ -221,6 +221,47 @@ class StudyGoalService:
             study_goal,
         )
 
+    def update_progress(
+        self,
+        db: Session,
+        study_goal_id: int,
+        user_id: int,
+        value: int,
+    ) -> StudyGoalResponse:
+
+        if value <= 0:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="O valor de progresso deve ser maior que zero",
+            )
+
+        study_goal = self._get_goal_or_404(
+            db,
+            study_goal_id,
+            user_id,
+        )
+
+        if study_goal.status != GoalStatus.ACTIVE:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Só metas ativas podem receber progresso",
+            )
+
+        study_goal.current_value += value
+
+        if study_goal.current_value >= study_goal.target_value:
+            study_goal.current_value = study_goal.target_value
+            study_goal.status = GoalStatus.COMPLETED
+
+        study_goal.updated_at = datetime.utcnow()
+
+        study_goal = self.repository.update(
+            db,
+            study_goal,
+        )
+
+        return self.to_response(study_goal)
+
     def calculate_progress(
         self,
         study_goal: StudyGoal,
@@ -246,13 +287,13 @@ class StudyGoalService:
         if not study_plan:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Study plan not found",
+                detail="Plano de estudos não encontrado",
             )
 
         if study_plan.user_id != user_id:
             raise HTTPException(
                 status_code=status.HTTP_403_FORBIDDEN,
-                detail="You do not have access to this study plan",
+                detail="Você não tem acesso a este plano de estudos",
             )
 
     def _validate_dates(
@@ -264,7 +305,7 @@ class StudyGoalService:
         if end_date is not None and end_date < start_date:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail="End date cannot be before start date",
+                detail="A data final não pode ser anterior à data inicial",
             )
 
     def _remove_current_primary(

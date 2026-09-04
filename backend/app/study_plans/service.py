@@ -21,7 +21,7 @@ class StudyPlanService:
         if data.end_date <= data.start_date:
             raise HTTPException(
                 status_code=400,
-                detail="End date must be after start date"
+                detail="A data final deve ser posterior à data inicial"
             )
 
         study_plan = StudyPlan(
@@ -52,13 +52,13 @@ class StudyPlanService:
         if not study_plan:
             raise HTTPException(
                 status_code=404,
-                detail="Study plan not found"
+                detail="Plano de estudos não encontrado"
             )
 
         if study_plan.user_id != user_id:
             raise HTTPException(
                 status_code=403,
-                detail="Access denied"
+                detail="Acesso negado"
             )
 
         return study_plan
@@ -103,7 +103,7 @@ class StudyPlanService:
         if new_end <= new_start:
             raise HTTPException(
                 status_code=400,
-                detail="End date must be after start date"
+                detail="A data final deve ser posterior à data inicial"
             )
 
         for field, value in values.items():

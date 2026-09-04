@@ -21,7 +21,7 @@ class SubjectService:
             if subject.name.lower() == data.name.lower():
                 raise HTTPException(
                     status_code=status.HTTP_400_BAD_REQUEST,
-                    detail="Subject already exists"
+                    detail="Matéria já cadastrada"
                 )
 
         return self.repository.create(db, data)
@@ -42,7 +42,7 @@ class SubjectService:
         if not subject:
             raise HTTPException(
                 status_code=status.HTTP_404_NOT_FOUND,
-                detail="Subject not found"
+                detail="Matéria não encontrada"
             )
 
         return subject

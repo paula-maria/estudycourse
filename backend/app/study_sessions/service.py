@@ -27,13 +27,13 @@ class StudySessionService:
         if not plan_subject:
             raise HTTPException(
                 status_code=404,
-                detail="Study plan subject not found"
+                detail="Assunto do plano de estudos não encontrado"
             )
 
         if data.duration_minutes <= 0:
             raise HTTPException(
                 status_code=400,
-                detail="Duration must be greater than zero"
+                detail="Duração deve ser maior que zero"
             )
 
         session = StudySession(
@@ -64,7 +64,7 @@ class StudySessionService:
         if not session:
             raise HTTPException(
                 status_code=404,
-                detail="Study session not found"
+                detail="Sessão de estudo não encontrada"
             )
 
         return session
@@ -104,7 +104,7 @@ class StudySessionService:
         ):
             raise HTTPException(
                 status_code=400,
-                detail="Duration must be greater than zero"
+                detail="Duração deve ser maior que zero"
             )
 
         for field, value in values.items():
