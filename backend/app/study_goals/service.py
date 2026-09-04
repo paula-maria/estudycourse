@@ -6,7 +6,11 @@ from sqlalchemy.orm import Session
 from app.study_goals.enums import GoalStatus, GoalType
 from app.study_goals.model import StudyGoal
 from app.study_goals.repository import StudyGoalRepository
-from app.study_goals.schemas import StudyGoalCreate, StudyGoalUpdate
+from app.study_goals.schemas import (
+    StudyGoalCreate,
+    StudyGoalResponse,
+    StudyGoalUpdate,
+)
 from app.study_plans.repository import StudyPlanRepository
 
 
@@ -16,12 +20,56 @@ class StudyGoalService:
         self.repository = StudyGoalRepository()
         self.study_plan_repository = StudyPlanRepository()
 
+    def to_response(
+        self,
+        study_goal: StudyGoal,
+    ) -> StudyGoalResponse:
+
+        return StudyGoalResponse(
+            id=study_goal.id,
+            user_id=study_goal.user_id,
+            study_plan_id=study_goal.study_plan_id,
+            title=study_goal.title,
+            description=study_goal.description,
+            goal_type=study_goal.goal_type,
+            target_value=study_goal.target_value,
+            current_value=study_goal.current_value,
+            start_date=study_goal.start_date,
+            end_date=study_goal.end_date,
+            status=study_goal.status,
+            is_primary=study_goal.is_primary,
+            created_at=study_goal.created_at,
+            updated_at=study_goal.updated_at,
+            progress_percentage=self.calculate_progress(study_goal),
+        )
+
+    def _get_goal_or_404(
+        self,
+        db: Session,
+        study_goal_id: int,
+        user_id: int,
+    ) -> StudyGoal:
+
+        study_goal = self.repository.get_by_id(
+            db,
+            study_goal_id,
+            user_id,
+        )
+
+        if not study_goal:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Study goal not found",
+            )
+
+        return study_goal
+
     def create(
         self,
         db: Session,
         user_id: int,
         data: StudyGoalCreate,
-    ) -> StudyGoal:
+    ) -> StudyGoalResponse:
 
         self._validate_dates(
             data.start_date,
@@ -56,42 +104,43 @@ class StudyGoalService:
             updated_at=datetime.utcnow(),
         )
 
-        return self.repository.create(
+        study_goal = self.repository.create(
             db,
             study_goal,
         )
+
+        return self.to_response(study_goal)
 
     def get(
         self,
         db: Session,
         study_goal_id: int,
         user_id: int,
-    ) -> StudyGoal:
+    ) -> StudyGoalResponse:
 
-        study_goal = self.repository.get_by_id(
+        study_goal = self._get_goal_or_404(
             db,
             study_goal_id,
             user_id,
         )
 
-        if not study_goal:
-            raise HTTPException(
-                status_code=status.HTTP_404_NOT_FOUND,
-                detail="Study goal not found",
-            )
-
-        return study_goal
+        return self.to_response(study_goal)
 
     def list(
         self,
         db: Session,
         user_id: int,
-    ) -> list[StudyGoal]:
+    ) -> list[StudyGoalResponse]:
 
-        return self.repository.list_by_user(
+        goals = self.repository.list_by_user(
             db,
             user_id,
         )
+
+        return [
+            self.to_response(goal)
+            for goal in goals
+        ]
 
     def update(
         self,
@@ -99,9 +148,9 @@ class StudyGoalService:
         study_goal_id: int,
         user_id: int,
         data: StudyGoalUpdate,
-    ) -> StudyGoal:
+    ) -> StudyGoalResponse:
 
-        study_goal = self.get(
+        study_goal = self._get_goal_or_404(
             db,
             study_goal_id,
             user_id,
@@ -153,10 +202,12 @@ class StudyGoalService:
 
         study_goal.updated_at = datetime.utcnow()
 
-        return self.repository.update(
+        study_goal = self.repository.update(
             db,
             study_goal,
         )
+
+        return self.to_response(study_goal)
 
     def delete(
         self,
@@ -165,7 +216,7 @@ class StudyGoalService:
         user_id: int,
     ) -> None:
 
-        study_goal = self.get(
+        study_goal = self._get_goal_or_404(
             db,
             study_goal_id,
             user_id,

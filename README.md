@@ -245,3 +245,12 @@ http://127.0.0.1:8000
 Documentação automática:
 
 http://127.0.0.1:8000/docs
+
+### 7. Executar testes automatizados
+
+Navegue até a pasta `backend` com o ambiente virtual ativado e execute:
+
+```bash
+PYTHONPATH=. pytest
+```
+
