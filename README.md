@@ -85,6 +85,14 @@ Cada usuário possui, no máximo, um perfil. O perfil armazena objetivo de estud
 - `PUT /subjects/{subject_id}` atualiza uma disciplina;
 - `DELETE /subjects/{subject_id}` remove uma disciplina.
 
+## Metas de estudo
+
+- `POST /study-goals` cria uma meta de estudos;
+- `GET /study-goals` lista as metas do usuário autenticado;
+- `GET /study-goals/{study_goal_id}` busca uma meta por ID;
+- `PUT /study-goals/{study_goal_id}` atualiza uma meta;
+- `DELETE /study-goals/{study_goal_id}` remove uma meta.
+
 ---
 
 ## Análise de edital

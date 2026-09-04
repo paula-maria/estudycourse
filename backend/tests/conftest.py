@@ -13,6 +13,7 @@ from app.subjects.model import Subject
 from app.study_plans.model import StudyPlan
 from app.study_plan_subjects.model import StudyPlanSubject
 from app.study_sessions.model import StudySession
+from app.study_goals.model import StudyGoal
 from app.core.security import hash_password, create_access_token
 
 from sqlalchemy.pool import StaticPool
@@ -94,6 +95,22 @@ def headers_a(token_a):
 @pytest.fixture
 def headers_b(token_b):
     return {"Authorization": f"Bearer {token_b}"}
+
+@pytest.fixture
+def auth_headers(headers_a):
+    return headers_a
+
+@pytest.fixture
+def other_auth_headers(headers_b):
+    return headers_b
+
+@pytest.fixture
+def user(user_a):
+    return user_a
+
+@pytest.fixture
+def other_user(user_b):
+    return user_b
 
 @pytest.fixture
 def subject_1(db_session):

@@ -97,7 +97,21 @@ Consolida as informações do usuário em um único payload para a tela principa
 
 ---
 
-## 7. Health Check (`/`)
+## 8. Study Goals (`/study-goals`)
+
+Gerencia as Metas de Estudo do usuário autenticado. Todas as operações são isoladas por usuário e validam se o `study_plan_id` informado pertence ao usuário logado.
+
+- **`POST /study-goals`** (Protegido): Cria uma nova meta de estudos.
+  - **Body**: `{"title": "...", "description": "...", "study_plan_id": null, "goal_type": "time" | "content", "target_value": 100, "start_date": "YYYY-MM-DD", "end_date": "YYYY-MM-DD", "is_primary": false}`
+  - Retorna a meta criada calculando dinamicamente o `progress_percentage`.
+- **`GET /study-goals`** (Protegido): Lista todas as metas de estudo do usuário autenticado.
+- **`GET /study-goals/{study_goal_id}`** (Protegido): Obtém os detalhes de uma meta de estudo específica.
+- **`PUT /study-goals/{study_goal_id}`** (Protegido): Atualiza os dados de uma meta existente.
+- **`DELETE /study-goals/{study_goal_id}`** (Protegido): Remove a meta de estudo.
+
+---
+
+## 9. Health Check (`/`)
 
 - **`GET /`**: Rota raiz de saúde para validar se a API e o banco de dados estão conectados corretamente. Retorna `{"message": "API is running", "database": "connected"}`.
 
