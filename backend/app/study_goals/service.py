@@ -11,6 +11,7 @@ from app.study_goals.schemas import (
     StudyGoalResponse,
     StudyGoalUpdate,
 )
+from app.study_plans.model import StudyPlan
 from app.study_plans.repository import StudyPlanRepository
 
 
@@ -156,13 +157,6 @@ class StudyGoalService:
             user_id,
         )
 
-        if data.study_plan_id is not None:
-            self._validate_study_plan(
-                db,
-                data.study_plan_id,
-                user_id,
-            )
-
         if data.start_date is not None or data.end_date is not None:
 
             start_date = (
@@ -241,17 +235,25 @@ class StudyGoalService:
         user_id: int,
     ) -> None:
 
-        if study_plan_id is not None:
-            study_plan = self.study_plan_repository.get_by_id(
-                db,
-                study_plan_id,
+        if study_plan_id is None:
+            return
+
+        study_plan = db.get(
+            StudyPlan,
+            study_plan_id,
+        )
+
+        if not study_plan:
+            raise HTTPException(
+                status_code=status.HTTP_404_NOT_FOUND,
+                detail="Study plan not found",
             )
 
-            if not study_plan or study_plan.user_id != user_id:
-                raise HTTPException(
-                    status_code=status.HTTP_404_NOT_FOUND,
-                    detail="Study plan not found",
-                )
+        if study_plan.user_id != user_id:
+            raise HTTPException(
+                status_code=status.HTTP_403_FORBIDDEN,
+                detail="You do not have access to this study plan",
+            )
 
     def _validate_dates(
         self,
