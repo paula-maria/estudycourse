@@ -83,3 +83,12 @@ class StudyGoal(Base):
         DateTime,
         nullable=False,
     )
+
+    @property
+    def progress_percentage(self) -> float:
+        if not self.target_value or self.target_value <= 0:
+            return 0.0
+
+        progress = (self.current_value / self.target_value) * 100
+        return round(progress, 2)
+

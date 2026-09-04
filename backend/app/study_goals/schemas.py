@@ -37,6 +37,8 @@ class StudyGoalUpdate(BaseModel):
 
     description: str | None = None
 
+    study_plan_id: int | None = None
+
     target_value: int | None = Field(
         default=None,
         gt=0,
